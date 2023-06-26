@@ -12,204 +12,210 @@ Utilice el archivo `data.csv` para resolver las preguntas.
 
 """
 
+import csv
 
 def pregunta_01():
-    with open('data.csv', 'r') as file:
-        total = 0
-        for line in file:
-            columns = line.strip().split('\t')
-            total += int(columns[1])
-    return total
-
-# Resultado: 214
+    sum=0
+    with open('data.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            sum+= int(row[1])
+    return sum
 
 
 def pregunta_02():
-    with open('data.csv', 'r') as file:
-        count_dict = {}
-        for line in file:
-            columns = line.strip().split('\t')
-            letter = columns[0]
-            count_dict[letter] = count_dict.get(letter, 0) + 1
-    sorted_counts = sorted(count_dict.items())
-    return sorted_counts
+    columna = []
+    letras=[]
+    apariciones = []
+    with open('data.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+                columna.append(row[0])
+                if(not row[0] in letras):
+                    letras.append(row[0])
+    letras.sort()
+    for letra in letras:
+        apariciones.append((letra, columna.count(letra)))
 
-# Resultado:
-# [('A', 8), ('B', 7), ('C', 5), ('D', 6), ('E', 14)]
-
+    return apariciones
 
 def pregunta_03():
-    with open('data.csv', 'r') as file:
-        sum_dict = {}
-        for line in file:
-            columns = line.strip().split('\t')
-            letter = columns[0]
-            value = int(columns[1])
-            sum_dict[letter] = sum_dict.get(letter, 0) + value
-    sorted_sums = sorted(sum_dict.items())
-    return sorted_sums
-
-# Resultado:
-# [('A', 53), ('B', 36), ('C', 27), ('D', 31), ('E', 67)]
-
+    letras=[]
+    conteo = []
+    suma=[]
+    with open('data.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            if(not row[0] in letras):
+                letras.append(row[0])
+                conteo.append(int(row[1]))
+            else:
+                conteo[letras.index(row[0])]+=int(row[1])
+    for letra in letras:
+        suma.append((letra,conteo[letras.index(letra)]))
+    suma.sort(reverse=False)
+    return suma
 
 def pregunta_04():
-    with open('data.csv', 'r') as file:
-        month_counts = {}
-        for line in file:
-            columns = line.strip().split('\t')
-            date = columns[2]
-            month = date.split('-')[1]
-            month_counts[month] = month_counts.get(month, 0) + 1
-    sorted_counts = sorted(month_counts.items())
-    return sorted_counts
+    
+    meses=[]
+    columna = []
+    apariciones = []
+    with open('data.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            mes = row[2].split("-")[1]
+            columna.append(mes)
+            if(not mes in meses):
+                meses.append(mes)
+    meses.sort()
+    for mes in meses:
+        apariciones.append((mes, columna.count(mes)))
+    return apariciones
 
 def pregunta_05():
-    letters = []
-    count = []
-
+    letras=[]
+    colMax = []
+    colMin = []
+    maximos = []
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for line in file:
-            if not line[0] in letters:
-                letters.append(fila[0])
-                count.append([int(fila[1])])
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            if(not row[0] in letras):
+                letras.append(row[0])
+                colMax.append(int(row[1]))
+                colMin.append(int(row[1]))
             else:
-                count[letras.index(fila[0])].append(int(fila[1]))
-
-    out = []
-
-    for letter in sorted(set(letras)):
-        out.append((letter, max(count[letters.index(letter)]), min(count[letters.index(letter)])))
-    
-    return out
+                if(colMax[letras.index(row[0])]<int(row[1])):
+                    colMax[letras.index(row[0])]=int(row[1])
+                if(colMin[letras.index(row[0])]>int(row[1])):
+                    colMin[letras.index(row[0])]=int(row[1])
+    for letra in letras:
+        maximos.append((letra,colMax[letras.index(letra)],colMin[letras.index(letra)]))
+    maximos.sort(reverse=False)
+    return maximos
 
 def pregunta_06():
-    cadenas = []
-    valores = []
-
+    letras=[]
+    colMax = []
+    colMin = []
+    dic = []
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for fila in datos:
-            diccionario = fila[4].split(',')
-
-            for elemento in diccionario: 
-                cadena = elemento.split(':')[0]
-                valor = elemento.split(':')[1]
-
-                if cadena not in cadenas:
-                    cadenas.append(cadena)
-                    valores.append([int(valor)])
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            for cod in row[4].split(','):
+                letra = cod.split(':')[0]
+                codigo = cod.split(':')[1]
+                if(not letra in letras):
+                    letras.append(letra)
+                    colMax.append(int(codigo))
+                    colMin.append(int(codigo))
                 else:
-                    valores[cadenas.index(cadena)].append(int(valor))
-
-    salida = []
-
-    for cadena in sorted(cadenas):
-        salida.append((cadena, min(valores[cadenas.index(cadena)]), max(valores[cadenas.index(cadena)])))
-
-    return salida
+                    if(colMax[letras.index(letra)]<int(codigo)):
+                        colMax[letras.index(letra)]=int(codigo)
+                    if(colMin[letras.index(letra)]>int(codigo)):
+                        colMin[letras.index(letra)]=int(codigo)
+    for letra in letras:
+        dic.append((letra,colMin[letras.index(letra)],colMax[letras.index(letra)]))
+    dic.sort(reverse=False)
+    return dic
 
 def pregunta_07():
+
     numeros = []
     letras = []
-
+    reg = []
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for fila in datos:
-            if int(fila[1]) not in numeros:
-                numeros.append(int(fila[1]))
-                letras.append([fila[0]])
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            if(not int(row[1]) in numeros):
+                numeros.append(int(row[1]))
+                letras.append([row[0]])
             else:
-                letras[numeros.index(int(fila[1]))].append(fila[0])
-
-    salida = []
-
-    for numero in sorted(numeros):
-        salida.append((numero, letras[numeros.index(numero)]))
-
-    return salida
+                letras[numeros.index(int(row[1]))].append(row[0])
+    for numero in numeros:
+        reg.append((numero,letras[numeros.index(numero)]))
+    reg.sort(reverse=False)
+    return reg
 
 def pregunta_08():
     numeros = []
     letras = []
-
+    reg = []
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for fila in datos:
-            if int(fila[1]) not in numeros:
-                numeros.append(int(fila[1]))
-                letras.append({fila[0]})
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            if(not int(row[1]) in numeros):
+                numeros.append(int(row[1]))
+                letras.append([row[0]])
             else:
-                letras[numeros.index(int(fila[1]))].add(fila[0])
+                if(not row[0] in letras[numeros.index(int(row[1]))]):
+                    letras[numeros.index(int(row[1]))].append(row[0])
 
-    salida = []
-
-    for numero in sorted(numeros):
-        salida.append((numero, list(sorted(letras[numeros.index(numero)]))))
-
-    return salida
+    for numero in numeros:
+        order = letras[numeros.index(numero)]
+        order.sort()
+        reg.append((numero,order))
+    reg.sort(reverse=False)
+    return reg
 
 def pregunta_09():
-    salida = {}
-
+    columna = []
+    letras = []
+    dictionarie = {}
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for fila in datos:
-            diccionario = fila[4].split(',')
-
-            for elemento in diccionario: 
-                cadena = elemento.split(':')[0]
-
-                if cadena not in salida.keys():
-                    salida[cadena] = 1
-                else:
-                    salida[cadena] += 1
-
-    return dict(sorted(salida.items()))
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            for cod in row[4].split(','):
+                letra = cod.split(':')[0]
+                columna.append(letra)
+                if( not letra in letras):
+                    letras.append(letra)
+    letras.sort()
+    for letra in letras:
+        dictionarie.update({letra: columna.count(letra)})
+    return dictionarie
 
 def pregunta_10():
-    salida = []
-
+    letras=[]
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for fila in datos:
-            col4 = len(fila[3].split(','))
-            col5 = len(fila[4].split(','))
-            salida.append((fila[0], col4, col5))
-    
-    return salida
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            col4 = row[3].split(",")
+            col4 = len(col4)
+            col5 = row[4].split(",")
+            col5 = len(col5)
+            letras.append((row[0], col4, col5))
+    return letras
+print(pregunta_10())
 
 def pregunta_11():
-    letras = {}
-
+    letras={}
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for fila in datos:
-            for letra in fila[3].split(','):
-                if not letra in letras.keys():
-                    letras[letra] = int(fila[1])
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            for letra in row[3].split(","):
+                if(not letra in letras.keys()):
+                    letras.update({letra: int(row[1])})
                 else:
-                    letras[letra] += int(fila[1])
-
-    return dict(sorted(letras.items()))
+                    letras[letra] += int(row[1])
+    dicc = sorted(letras.items())
+    return dict(dicc)
 
 
 def pregunta_12():
-    letras = {}
-
+    letras={}
     with open('data.csv') as csv_file:
-        datos = csv.reader(csv_file, delimiter='	')
-        for fila in datos:
-            letra = fila[0]
-            
-            for elemento in fila[4].split(','):
-                numero = int(elemento.split(':')[1])
-
-                if not letra in letras.keys():
-                    letras[letra] = numero
+        csv_reader = csv.reader(csv_file, delimiter='	')
+        for row in csv_reader:
+            letra=row[0]
+            for codigo in row[4].split(","):
+                numero = int(codigo.split(":")[1])
+                if(not letra in letras.keys()):
+                    letras.update({letra: numero})
                 else:
                     letras[letra] += numero
-
-    return dict(sorted(letras.items()))
+    dicc = sorted(letras.items())
+    return dict(dicc)
+print(pregunta_12())
 
